@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประวัติส่วนตัว (Resume)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f7f6; color: #333; line-height: 1.6; padding: 20px 20px 40px 20px; }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto 30px auto; /* เพิ่ม margin ด้านล่างเพื่อไม่ให้ติดกับแถบควบคุม */
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        [contenteditable="true"]:focus { outline: 2px dashed #3498db; background-color: #faffbd; padding: 2px 5px; border-radius: 4px; }
+        .header { text-align: center; border-bottom: 2px solid #3498db; padding-bottom: 20px; margin-bottom: 25px; }
+        .profile-container { position: relative; display: inline-block; margin-bottom: 15px; }
+        .profile-img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #3498db; display: block; cursor: pointer; }
+        .profile-container:hover .upload-overlay { opacity: 1; }
+        .upload-overlay { position: absolute; top: 0; left: 0; width: 150px; height: 150px; border-radius: 50%; background: rgba(0, 0, 0, 0.6); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; opacity: 0; transition: opacity 0.2s; cursor: pointer; text-align: center; padding: 10px; }
+        #file-input { display: none; }
+        .header h1 { font-size: 2.2rem; color: #2c3e50; margin-bottom: 5px; }
+        .header p { color: #7f8c8d; font-size: 1.1rem; font-weight: 500; }
+        h2 { color: #2c3e50; border-left: 4px solid #3498db; padding-left: 10px; margin-bottom: 15px; font-size: 1.4rem; }
+        .section { margin-bottom: 30px; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        .info-item strong { color: #34495e; }
+        .timeline-item { margin-bottom: 15px; padding-left: 15px; border-left: 2px solid #ecf0f1; }
+        .timeline-date { font-size: 0.9rem; color: #3498db; font-weight: bold; }
+        .timeline-title { font-weight: bold; color: #2c3e50; }
+        .skills-container { display: flex; flex-wrap: wrap; gap: 10px; }
+        .skill-tag { background-color: #e8f4fd; color: #3498db; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 500; }
+
+        /* แถบควบคุมย้ายมาอยู่ข้างล่างสุด */
+        .controls {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #2c3e50;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+        }
+        .controls-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+        .status-msg { font-size: 0.9rem; color: #ecf0f1; }
+        .btn-group { display: flex; gap: 10px; }
+        .btn { color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+        .btn-save { background-color: #3498db; }
+        .btn-save:hover { background-color: #2980b9; }
+        .btn-print { background-color: #2ecc71; }
+        .btn-print:hover { background-color: #27ae60; }
+        .btn-clear { background-color: #e74c3c; }
+        .btn-clear:hover { background-color: #c0392b; }
+        
+        .link-output-container { display: none; background: #34495e; padding: 10px; border-radius: 4px; margin-top: 10px; }
+        .link-output-container label { display: block; font-size: 0.85rem; color: #bdc3c7; margin-bottom: 5px; }
+        .link-textbox { width: 100%; padding: 8px; background: #1a252f; border: 1px solid #7f8c8d; color: #2ecc71; border-radius: 4px; font-family: monospace; font-size: 0.85rem; resize: none; }
+
+        /* ซ่อนสิ่งที่ไม่จำเป็นตอนพิมพ์ PDF */
+        @media print {
+            body { background-color: white; padding: 0; }
+            .controls, .upload-overlay, .link-output-container { display: none !important; }
+            .container { box-shadow: none; padding: 0; margin-bottom: 0; }
+            [contenteditable="true"]:focus { outline: none; background-color: transparent; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="resume-content">
+
+    <div class="header">
+        <div class="profile-container" onclick="document.getElementById('file-input').click()">
+            <img id="profile-preview" src="https://via.placeholder.com/150" alt="รูปโปรไฟล์" class="profile-img">
+            <div class="upload-overlay">คลิกเพื่อเปลี่ยนรูป</div>
+            <input type="file" id="file-input" accept="image/*">
+        </div>
+        <h1 id="data-name" contenteditable="true"> นายเจษฎากร พิทักษ์ </h1>
+        <p id="data-role" contenteditable="true">Web Developer & Designer</p>
+    </div>
+
+    <div class="section">
+        <h2>ข้อมูลส่วนตัว (Personal Info)</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>กรุ๊ปเลือด:</strong> <span id="data-address" contenteditable="true"> O </span></div>
+            <div class="info-item"><strong>วันเกิด:</strong> <span id="data-birth" contenteditable="true">12 กุมภาพันธ์ 2549</span></div>
+            <div class="info-item"><strong>อีเมล:</strong> <span id="data-email" contenteditable="true">jesadakornpitak094@gmail.com</span></div>
+            <div class="info-item"><strong>เบอร์โทร:</strong> <span id="data-phone" contenteditable="true">092-785-3143</span></div>
+            <div class="info-item"><strong>ที่อยู่:</strong> <span id="data-address" contenteditable="true">213/2 ซอย18 ต.หนองหาร อ.สันทราย จ.เชียงใหม่ 50290</span></div>
+            <div class="info-item"><strong>Facebook:</strong> <span id="data-address" contenteditable="true"> Tle Sounds </span></div>
+            <div class="info-item"><strong>Instragram:</strong> <span id="data-web" contenteditable="true"> tks25_49 </span></div>
+        </div>
+    </div>
+
+     <div class="section">
+        <h2>ลักษณะนิสัย </h2>
+        <div id="data-experience">
+            <div class="timeline-item">
+                <div class="timeline-title" contenteditable="true">Senior Web Developer — บริษัท เทคโนโลยีจำกัด</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>ประวัติการทำงาน (Experience)</h2>
+        <div id="data-experience">
+            <div class="timeline-item">
+                <div class="timeline-date" contenteditable="true">2024 - ปัจจุบัน</div>
+                <div class="timeline-title" contenteditable="true">Senior Web Developer — บริษัท เทคโนโลยีจำกัด</div>
+                <p contenteditable="true">พัฒนาและดูแลรักษาเว็บไซต์หลักขององค์กร รองรับผู้ใช้งานมากกว่า 10,000 คนต่อวัน</p>
+                <div class="timeline-date" contenteditable="true">2024 - ปัจจุบัน</div>
+                <div class="timeline-title" contenteditable="true">Senior Web Developer — บริษัท เทคโนโลยีจำกัด</div>
+                <p contenteditable="true">พัฒนาและดูแลรักษาเว็บไซต์หลักขององค์กร รองรับผู้ใช้งานมากกว่า 10,000 คนต่อวัน</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>ประวัติการศึกษา (Education)</h2>
+        <div id="data-education">
+            <div class="timeline-item">
+                <div class="timeline-date" contenteditable="true">2017 - 2021</div>
+                <div class="timeline-title" contenteditable="true">ปริญญาตรี วิทยาศาสตรบัณฑิต (วิทยาการคอมพิวเตอร์)</div>
+                <p contenteditable="true">มหาวิทยาลัยตัวอย่าง — เกรดเฉลี่ย 3.50</p>
+                <div class="timeline-date" contenteditable="true">2017 - 2021</div>
+                <div class="timeline-title" contenteditable="true">ปริญญาตรี วิทยาศาสตรบัณฑิต (วิทยาการคอมพิวเตอร์)</div>
+                <p contenteditable="true">มหาวิทยาลัยตัวอย่าง — เกรดเฉลี่ย 3.50</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>ทักษะความสามารถ (Skills)</h2>
+        <div class="skills-container" id="data-skills">
+            <span class="skill-tag" contenteditable="true">HTML5 / CSS3</span>
+            <span class="skill-tag" contenteditable="true">JavaScript</span>
+            <span class="skill-tag" contenteditable="true">React.js</span>
+            <span class="skill-tag" contenteditable="true">Visual Code</span>
+        </div>
+    </div>
+
+</div>
+
+<div class="controls">
+    <div class="controls-top">
+        <span class="status-msg" id="status-text">✍️ แก้ไขข้อมูลด้านบนเสร็จแล้ว กดบันทึกข้อมูลได้ที่นี่ครับ</span>
+        <div class="btn-group">
+            <button class="btn btn-save" onclick="saveData()">💾 บันทึกข้อมูล & สร้างลิงก์</button>
+            <button class="btn btn-print" onclick="window.print()">🖨️ เซฟเป็น PDF</button>
+            <button class="btn btn-clear" onclick="clearData()">🗑️ รีเซ็ต</button>
+        </div>
+    </div>
+    <div class="link-output-container" id="link-box-container">
+        <label for="link-text">🔗 ลิงก์สั้นสำหรับแชร์ประวัติของคุณ:</label>
+        <textarea id="link-text" class="link-textbox" rows="2" readonly onclick="this.select()"></textarea>
+    </div>
+</div>
+
+<script>
+    const fileInput = document.getElementById('file-input');
+    const profilePreview = document.getElementById('profile-preview');
+    const statusText = document.getElementById('status-text');
+    const linkBoxContainer = document.getElementById('link-box-container');
+    const linkText = document.getElementById('link-text');
+
+    fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                profilePreview.src = e.target.result;
+                localStorage.setItem('localProfileImg', e.target.result); 
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function getResumeObject() {
+        return {
+            name: document.getElementById('data-name').innerText,
+            role: document.getElementById('data-role').innerText,
+            birth: document.getElementById('data-birth').innerText,
+            email: document.getElementById('data-email').innerText,
+            phone: document.getElementById('data-phone').innerText,
+            address: document.getElementById('data-address').innerText,
+            web: document.getElementById('data-web').innerText,
+            exp: document.getElementById('data-experience').innerHTML,
+            edu: document.getElementById('data-education').innerHTML,
+            skills: document.getElementById('data-skills').innerHTML
+        };
+    }
+
+    function renderResumeData(data) {
+        if(data.name) document.getElementById('data-name').innerText = data.name;
+        if(data.role) document.getElementById('data-role').innerText = data.role;
+        if(data.birth) document.getElementById('data-birth').innerText = data.birth;
+        if(data.email) document.getElementById('data-email').innerText = data.email;
+        if(data.phone) document.getElementById('data-phone').innerText = data.phone;
+        if(data.address) document.getElementById('data-address').innerText = data.address;
+        if(data.web) document.getElementById('data-web').innerText = data.web;
+        if(data.exp) document.getElementById('data-experience').innerHTML = data.exp;
+        if(data.edu) document.getElementById('data-education').innerHTML = data.edu;
+        if(data.skills) document.getElementById('data-skills').innerHTML = data.skills;
+    }
+
+    function saveData() {
+        const resumeData = getResumeObject();
+        const jsonStr = JSON.stringify(resumeData);
+
+        localStorage.setItem('localTextData', jsonStr);
+
+        const encodedData = btoa(encodeURIComponent(jsonStr));
+        const newUrl = window.location.origin + window.location.pathname + '?data=' + encodedData;
+        
+        try { window.history.pushState({ path: newUrl }, '', newUrl); } catch(e) {}
+
+        linkBoxContainer.style.display = "block";
+        linkText.value = newUrl;
+
+        statusText.innerText = "💾 บันทึกข้อมูลและสร้างลิงก์สำเร็จ!";
+        statusText.style.color = "#2ecc71";
+
+        navigator.clipboard.writeText(newUrl).then(() => {
+            alert('💾 บันทึกสำเร็จ!\nระบบคัดลอกลิงก์แชร์ให้เรียบร้อยแล้ว สามารถกดวาง (Ctrl+V) ส่งต่อได้ทันทีครับ');
+        }).catch(() => {
+            alert('💾 บันทึกสำเร็จ!\nกรุณาก๊อปปี้ลิงก์แชร์จากกล่องข้อความสีดำด้านล่างสุดครับ');
+        });
+    }
+
+    function clearData() {
+        if(confirm("คุณต้องการล้างข้อมูลทั้งหมดใช่หรือไม่?")) {
+            localStorage.clear();
+            window.location.href = window.location.origin + window.location.pathname;
+        }
+    }
+
+    window.addEventListener('load', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const dataParam = urlParams.get('data');
+        const localText = localStorage.getItem('localTextData');
+        const localImg = localStorage.getItem('localProfileImg');
+
+        if (dataParam) {
+            try {
+                const decodedData = decodeURIComponent(atob(dataParam));
+                renderResumeData(JSON.parse(decodedData));
+            } catch (e) {}
+        } else if (localText) {
+            try { renderResumeData(JSON.parse(localText)); } catch (e) {}
+        }
+        
+        if (localImg) { profilePreview.src = localImg; }
+    });
+</script>
+
+</body>
+</html>
